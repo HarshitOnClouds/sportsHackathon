@@ -138,11 +138,58 @@ const getUserById = async (req, res) => {
     }
 };
 
+// @desc    Update user profile
+// @route   PUT /api/users/:id
+// @access  Private (should be the user themselves)
+const updateUser = async (req, res) => {
+    try {
+        const { name, district, sport, age, team, password } = req.body;
+
+        const user = await User.findById(req.params.id);
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Update fields
+        if (name) user.name = name;
+        if (district) user.district = district;
+        
+        // Role-specific updates
+        if (user.role === 'athlete') {
+            if (sport) user.sport = sport;
+            if (age) user.age = age;
+        } else if (user.role === 'coach') {
+            if (team) user.team = team;
+        }
+
+        // Update password if provided
+        if (password) {
+            if (password.length < 6) {
+                return res.status(400).json({ message: 'Password must be at least 6 characters' });
+            }
+            const salt = await bcrypt.genSalt(10);
+            user.password = await bcrypt.hash(password, salt);
+        }
+
+        const updatedUser = await user.save();
+
+        // Don't send password back to client
+        const userResponse = updatedUser.toObject();
+        delete userResponse.password;
+
+        res.status(200).json(userResponse);
+
+    } catch (error) {
+        console.error('UPDATE USER ERROR:', error);
+        res.status(500).json({ message: 'Server Error', error: error.message });
+    }
+};
 
 module.exports = {
     createUser,
     getAthletes,
     getUserById,
     loginUser,
-
+    updateUser,
 };

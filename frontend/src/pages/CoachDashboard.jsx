@@ -64,16 +64,38 @@ function CoachDashboard() {
     };
 
     return (
-        <div className="bg-gray-800 p-6 rounded-lg shadow-xl">
-            <h1 className="text-3xl font-bold mb-6 text-blue-400">
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl transition-colors duration-300">
+            <h1 className="text-3xl font-bold mb-6 text-blue-600 dark:text-blue-400">
                 {user?.role === 'coach' ? 'Coach Dashboard' : 'Other Athletes'}
             </h1>
 
+            {/* --- SUMMARY STATS --- */}
+            {!loading && !error && (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div className="bg-blue-100 dark:bg-blue-900 p-4 rounded-lg">
+                        <p className="text-sm text-blue-600 dark:text-blue-300 font-medium">Total Athletes</p>
+                        <p className="text-3xl font-bold text-blue-700 dark:text-blue-200">{athletes.length}</p>
+                    </div>
+                    <div className="bg-green-100 dark:bg-green-900 p-4 rounded-lg">
+                        <p className="text-sm text-green-600 dark:text-green-300 font-medium">Unique Sports</p>
+                        <p className="text-3xl font-bold text-green-700 dark:text-green-200">
+                            {[...new Set(athletes.map(a => a.sport))].length}
+                        </p>
+                    </div>
+                    <div className="bg-purple-100 dark:bg-purple-900 p-4 rounded-lg">
+                        <p className="text-sm text-purple-600 dark:text-purple-300 font-medium">Districts</p>
+                        <p className="text-3xl font-bold text-purple-700 dark:text-purple-200">
+                            {[...new Set(athletes.map(a => a.district))].length}
+                        </p>
+                    </div>
+                </div>
+            )}
+
             {/* --- FILTERS --- */}
-            <div className="flex flex-col md:flex-row gap-4 mb-6 p-4 bg-gray-700 rounded-lg">
+            <div className="flex flex-col md:flex-row gap-4 mb-6 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg transition-colors duration-300">
                 {/* Name Search */}
                 <div className="flex-1">
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-1">Search by Name</label>
+                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Search by Name</label>
                     <input
                         type="text"
                         name="name"
@@ -81,13 +103,13 @@ function CoachDashboard() {
                         value={filters.name}
                         onChange={handleFilterChange}
                         placeholder="e.g., John Doe"
-                        className="w-full p-2 bg-gray-800 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                 </div>
 
                 {/* Sport Filter */}
                 <div className="flex-1">
-                    <label htmlFor="sport" className="block text-sm font-medium text-gray-300 mb-1">Sport</label>
+                    <label htmlFor="sport" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Sport</label>
                     <input
                         type="text"
                         name="sport"
@@ -95,13 +117,13 @@ function CoachDashboard() {
                         value={filters.sport}
                         onChange={handleFilterChange}
                         placeholder="e.g., Sprinting"
-                        className="w-full p-2 bg-gray-800 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                 </div>
 
                 {/* District Filter */}
                 <div className="flex-1">
-                    <label htmlFor="district" className="block text-sm font-medium text-gray-300 mb-1">District</label>
+                    <label htmlFor="district" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">District</label>
                     <input
                         type="text"
                         name="district"
@@ -109,13 +131,13 @@ function CoachDashboard() {
                         value={filters.district}
                         onChange={handleFilterChange}
                         placeholder="e.g., Dehradun"
-                        className="w-full p-2 bg-gray-800 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                 </div>
 
                 {/* Age Filter */}
                 <div className="flex-1">
-                    <label htmlFor="age" className="block text-sm font-medium text-gray-300 mb-1">Max Age</label>
+                    <label htmlFor="age" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Max Age</label>
                     <input
                         type="number"
                         name="age"
@@ -123,27 +145,37 @@ function CoachDashboard() {
                         value={filters.age}
                         onChange={handleFilterChange}
                         placeholder="e.g., 18"
-                        className="w-full p-2 bg-gray-800 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
+                </div>
+
+                {/* Clear Filters Button */}
+                <div className="flex items-end">
+                    <button
+                        onClick={() => setFilters({ name: '', sport: '', district: '', age: '' })}
+                        className="px-4 py-2 bg-red-500 dark:bg-red-600 text-white rounded-lg hover:bg-red-600 dark:hover:bg-red-700 transition-colors"
+                    >
+                        Clear Filters
+                    </button>
                 </div>
             </div>
 
             {/* --- RESULTS --- */}
             <div className="mt-4">
                 {loading && <LoadingSpinner />}
-                {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative text-center">{error}</div>}
+                {error && <div className="bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-200 px-4 py-3 rounded relative text-center">{error}</div>}
 
                 {!loading && !error && (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {athletes.length === 0 ? (
-                            <p className="col-span-full text-center text-gray-400">No athletes found matching your criteria.</p>
+                            <p className="col-span-full text-center text-gray-600 dark:text-gray-400">No athletes found matching your criteria.</p>
                         ) : (
                             athletes.map(athlete => (
-                                <div key={athlete._id} className="bg-gray-700 p-4 rounded-lg shadow-lg flex flex-col justify-between">
+                                <div key={athlete._id} className="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg shadow-lg flex flex-col justify-between transition-colors duration-300">
                                     <div>
-                                        <h3 className="text-xl font-semibold text-green-400">{athlete.name}</h3>
-                                        <p className="text-gray-300">{athlete.sport}</p>
-                                        <p className="text-gray-400">{athlete.district} | Age: {athlete.age}</p>
+                                        <h3 className="text-xl font-semibold text-green-600 dark:text-green-400">{athlete.name}</h3>
+                                        <p className="text-gray-700 dark:text-gray-300">{athlete.sport}</p>
+                                        <p className="text-gray-600 dark:text-gray-400">{athlete.district} | Age: {athlete.age}</p>
                                     </div>
 
                                     {/* This links to the Athlete's profile page - the "wow" feature! */}

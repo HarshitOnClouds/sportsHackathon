@@ -7,6 +7,7 @@ import Navbar from './pages/Navbar';
 import HomePage from './pages/HomePage';
 import CoachDashboard from './pages/CoachDashboard';
 import AthleteProfile from './pages/AthleteProfile';
+import EditProfile from './pages/EditProfile';
 import ProtectedRoute from './components/ProtectedRoute';
 
 // We'll create these component files next
@@ -16,13 +17,14 @@ import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
-    <div className="min-h-screen container mx-auto p-4">
-      
-      {/* TODO: Add a Navbar component here */}
-      <Navbar />
-      <h1 className="text-3xl font-bold text-center text-blue-400 mb-8">
-        UK-TalentScout
-      </h1>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+      <div className="container mx-auto p-4">
+        
+        {/* TODO: Add a Navbar component here */}
+        <Navbar />
+        <h1 className="text-3xl font-bold text-center text-blue-600 dark:text-blue-400 mb-8">
+          UK-TalentScout
+        </h1>
 
       {/* --- Define Your App's Pages --- */}
       <Routes>
@@ -39,6 +41,11 @@ function App() {
             <AthleteProfile />
           </ProtectedRoute>
         } />
+        <Route path="/edit-profile" element={
+          <ProtectedRoute>
+            <EditProfile />
+          </ProtectedRoute>
+        } />
 
         {/* Placeholder for now */}
         {/* <Route path="/" element={
@@ -48,6 +55,7 @@ function App() {
           </div>
         } /> */}
       </Routes>
+      </div>
     </div>
   );
 }

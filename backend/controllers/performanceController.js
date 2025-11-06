@@ -66,7 +66,31 @@ const getAthletePerformance = async (req, res) => {
     }
 };
 
+// @desc    Delete a performance record
+// @route   DELETE /api/performance/:id
+// @access  Private (should be the athlete who owns it)
+const deletePerformance = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const performance = await Performance.findById(id);
+
+        if (!performance) {
+            return res.status(404).json({ message: 'Performance record not found' });
+        }
+
+        await Performance.findByIdAndDelete(id);
+
+        res.status(200).json({ message: 'Performance record deleted successfully' });
+
+    } catch (error) {
+        console.error('DELETE PERFORMANCE ERROR:', error);
+        res.status(500).json({ message: 'Server Error', error: error.message });
+    }
+};
+
 module.exports = {
     logPerformance,
-    getAthletePerformance
+    getAthletePerformance,
+    deletePerformance
 };
