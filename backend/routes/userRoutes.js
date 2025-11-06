@@ -5,14 +5,16 @@ const router = express.Router();
 const {
     createUser,
     getAthletes,
-    getUserById
+    getUserById,
+    loginUser,
+
 } = require('../controllers/userController');
 
 // --- Define API Endpoints ---
 
 // POST /api/users
 // This will be your "signup" route for both athletes and coaches
-router.post('/', createUser);
+router.post('/register', createUser);
 
 // GET /api/users/athletes
 // THIS IS YOUR "WOW" FEATURE ROUTE
@@ -24,5 +26,7 @@ router.get('/athletes', getAthletes);
 // This gets the profile for a single user (athlete or coach)
 router.get('/:id', getUserById);
 
-
+// POST /api/users/login
+// This is the login route for all users
+router.post('/login', loginUser);
 module.exports = router;

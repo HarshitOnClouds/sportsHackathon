@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 function CoachDashboard() {
+    const { user } = useAuth();
     // State for the filters
     const [filters, setFilters] = useState({
+        name: '',
         sport: '',
         district: '',
         age: '',
@@ -28,10 +32,18 @@ function CoachDashboard() {
                 if (filters.district) params.append('district', filters.district);
                 if (filters.age) params.append('age', filters.age);
 
-                const apiUrl = `${import.meta.env.VITE_API_URL}/api/users/athletes`;
-                const res = await axios.get(`${apiUrl}?${params.toString()}`);
+                const apiUrl = `http://localhost:3001/api/users/athletes`;
+                const res = await axios.get(apiUrl, { params });
 
-                setAthletes(res.data);
+                // Filter by name on the client side
+                let filteredAthletes = res.data;
+                if (filters.name) {
+                    filteredAthletes = filteredAthletes.filter(athlete =>
+                        athlete.name.toLowerCase().includes(filters.name.toLowerCase())
+                    );
+                }
+
+                setAthletes(filteredAthletes);
             } catch (err) {
                 setError('Failed to fetch athletes. Please try again.');
                 console.error(err);
@@ -53,10 +65,26 @@ function CoachDashboard() {
 
     return (
         <div className="bg-gray-800 p-6 rounded-lg shadow-xl">
-            <h1 className="text-3xl font-bold mb-6 text-blue-400">Coach Dashboard</h1>
+            <h1 className="text-3xl font-bold mb-6 text-blue-400">
+                {user?.role === 'coach' ? 'Coach Dashboard' : 'Other Athletes'}
+            </h1>
 
             {/* --- FILTERS --- */}
             <div className="flex flex-col md:flex-row gap-4 mb-6 p-4 bg-gray-700 rounded-lg">
+                {/* Name Search */}
+                <div className="flex-1">
+                    <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-1">Search by Name</label>
+                    <input
+                        type="text"
+                        name="name"
+                        id="name"
+                        value={filters.name}
+                        onChange={handleFilterChange}
+                        placeholder="e.g., John Doe"
+                        className="w-full p-2 bg-gray-800 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                </div>
+
                 {/* Sport Filter */}
                 <div className="flex-1">
                     <label htmlFor="sport" className="block text-sm font-medium text-gray-300 mb-1">Sport</label>
@@ -102,8 +130,8 @@ function CoachDashboard() {
 
             {/* --- RESULTS --- */}
             <div className="mt-4">
-                {loading && <p className="text-center text-blue-400">Loading athletes...</p>}
-                {error && <p className="text-center text-red-500">{error}</p>}
+                {loading && <LoadingSpinner />}
+                {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative text-center">{error}</div>}
 
                 {!loading && !error && (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

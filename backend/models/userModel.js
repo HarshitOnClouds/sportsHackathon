@@ -11,11 +11,15 @@ const userSchema = new Schema({
         type: String,
         required: [true, 'Please add an email'],
         unique: true,
-        trim: true
+        trim: true,
+        lowercase: true
     },
     
-    // For a hackathon, we can skip complex auth and just trust the email.
-    // password: { type: String, required: true }, 
+    password: { 
+        type: String, 
+        required: [true, 'Please add a password'],
+        minlength: 6
+    }, 
 
     // Role-based logic
     role: {

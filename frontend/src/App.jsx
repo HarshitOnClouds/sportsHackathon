@@ -2,10 +2,12 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 
 import SignupPage from './pages/SignupPage';
+import LoginPage from './pages/LoginPage';
 import Navbar from './pages/Navbar';
 import HomePage from './pages/HomePage';
 import CoachDashboard from './pages/CoachDashboard';
 import AthleteProfile from './pages/AthleteProfile';
+import ProtectedRoute from './components/ProtectedRoute';
 
 // We'll create these component files next
 // import HomePage from './pages/HomePage';
@@ -24,11 +26,19 @@ function App() {
 
       {/* --- Define Your App's Pages --- */}
       <Routes>
-<Route path="/" element={<SignupPage />} />
-        <Route path="/signup" element={<SignupPage />} />
         <Route path="/" element={<HomePage />} />
-        <Route path="/dashboard" element={<CoachDashboard />} />
-        <Route path="/athlete/:id" element={<AthleteProfile />} />
+        <Route path="/signup" element={<SignupPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/dashboard" element={
+          <ProtectedRoute>
+            <CoachDashboard />
+          </ProtectedRoute>
+        } />
+        <Route path="/athlete/:id" element={
+          <ProtectedRoute>
+            <AthleteProfile />
+          </ProtectedRoute>
+        } />
 
         {/* Placeholder for now */}
         {/* <Route path="/" element={
