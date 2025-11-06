@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import LoadingSpinner from '../components/LoadingSpinner';
+import { SPORTS_LIST } from '../constants/sportsConstants';
 
 function CoachDashboard() {
     const { user } = useAuth();
@@ -110,15 +111,20 @@ function CoachDashboard() {
                 {/* Sport Filter */}
                 <div className="flex-1">
                     <label htmlFor="sport" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Sport</label>
-                    <input
-                        type="text"
+                    <select
                         name="sport"
                         id="sport"
                         value={filters.sport}
                         onChange={handleFilterChange}
-                        placeholder="e.g., Sprinting"
                         className="w-full p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
+                    >
+                        <option value="">All Sports</option>
+                        {SPORTS_LIST.filter(sport => sport !== "Select a Sport").map((sport) => (
+                            <option key={sport} value={sport}>
+                                {sport}
+                            </option>
+                        ))}
+                    </select>
                 </div>
 
                 {/* District Filter */}

@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import LoadingSpinner from '../components/LoadingSpinner';
+import { METRIC_LIST } from '../constants/sportsConstants';
 
 // Import Chart.js components
 import { Line } from 'react-chartjs-2';
@@ -230,6 +231,20 @@ function AthleteProfile() {
         setFormError(null);
         setFormSuccess(null);
 
+        // Validate metric selection
+        if (!formData.metricName || formData.metricName === 'Select a Metric') {
+            setFormError('Please select a metric');
+            showToast('Please select a metric', 'error');
+            return;
+        }
+
+        // Validate unit selection
+        if (!formData.metricUnit || formData.metricUnit === 'Select Unit') {
+            setFormError('Please select a unit');
+            showToast('Please select a unit', 'error');
+            return;
+        }
+
         try {
             const response = await axios.post('http://localhost:3001/api/performance', {
                 athleteId: id,
@@ -432,16 +447,22 @@ function AthleteProfile() {
                             <form onSubmit={handleFormSubmit} className="space-y-4">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                        Metric Name (e.g., 100m Sprint)
+                                        Metric Name
                                     </label>
-                                    <input
-                                        type="text"
+                                    <select
                                         name="metricName"
                                         value={formData.metricName}
                                         onChange={handleFormChange}
                                         required
                                         className="w-full p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    />
+                                    >
+                                        <option value="">Select a Metric</option>
+                                        {METRIC_LIST.map((metric) => (
+                                            <option key={metric} value={metric}>
+                                                {metric}
+                                            </option>
+                                        ))}
+                                    </select>
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-4">
@@ -462,16 +483,25 @@ function AthleteProfile() {
 
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                            Unit (e.g., seconds, meters)
+                                            Unit
                                         </label>
-                                        <input
-                                            type="text"
+                                        <select
                                             name="metricUnit"
                                             value={formData.metricUnit}
                                             onChange={handleFormChange}
                                             required
                                             className="w-full p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        />
+                                        >
+                                            <option value="">Select Unit</option>
+                                            <option value="seconds">seconds</option>
+                                            <option value="minutes">minutes</option>
+                                            <option value="meters">meters</option>
+                                            <option value="cm">cm</option>
+                                            <option value="kg">kg</option>
+                                            <option value="reps">reps</option>
+                                            <option value="points">points</option>
+                                            <option value="count">count</option>
+                                        </select>
                                     </div>
                                 </div>
 

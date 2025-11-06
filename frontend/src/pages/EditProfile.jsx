@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import LoadingSpinner from '../components/LoadingSpinner';
+import { SPORTS_LIST } from '../constants/sportsConstants';
 
 const EditProfile = () => {
     const { user, login } = useAuth();
@@ -43,6 +44,14 @@ const EditProfile = () => {
         e.preventDefault();
         setError(null);
         setLoading(true);
+
+        // Validate sport selection for athletes
+        if (user.role === 'athlete' && (!formData.sport || formData.sport === 'Select a Sport')) {
+            setError('Please select a valid sport');
+            showToast('Please select a valid sport', 'error');
+            setLoading(false);
+            return;
+        }
 
         try {
             // Prepare data to send
@@ -150,19 +159,23 @@ const EditProfile = () => {
                     {user.role === 'athlete' && (
                         <>
                             <div>
-                                <label htmlFor="sport" className="block text-sm font-medium text-gray-700 mb-1">
+                                <label htmlFor="sport" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                     Sport
                                 </label>
-                                <input
+                                <select
                                     id="sport"
                                     name="sport"
-                                    type="text"
                                     required
-                                    className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                    placeholder="Sport"
+                                    className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white bg-white dark:bg-gray-700 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                                     value={formData.sport}
                                     onChange={handleChange}
-                                />
+                                >
+                                    {SPORTS_LIST.map((sport) => (
+                                        <option key={sport} value={sport} disabled={sport === "Select a Sport"}>
+                                            {sport}
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
 
                             <div>

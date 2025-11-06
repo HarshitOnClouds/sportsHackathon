@@ -33,6 +33,9 @@ const createUser = async (req, res) => {
             if (!sport || !age) {
                 return res.status(400).json({ message: 'Athletes must provide sport and age.' });
             }
+            if (sport === 'Select a Sport') {
+                return res.status(400).json({ message: 'Please select a valid sport.' });
+            }
             userData.sport = sport;
             userData.age = age;
         } else if (role === 'coach') {
@@ -157,7 +160,12 @@ const updateUser = async (req, res) => {
         
         // Role-specific updates
         if (user.role === 'athlete') {
-            if (sport) user.sport = sport;
+            if (sport) {
+                if (sport === 'Select a Sport') {
+                    return res.status(400).json({ message: 'Please select a valid sport.' });
+                }
+                user.sport = sport;
+            }
             if (age) user.age = age;
         } else if (user.role === 'coach') {
             if (team) user.team = team;

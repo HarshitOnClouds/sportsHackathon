@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
+import { SPORTS_LIST } from '../constants/sportsConstants';
 
 const SignupPage = () => {
     const { login } = useAuth();
@@ -12,7 +13,7 @@ const SignupPage = () => {
         password: '',
         confirmPassword: '',
         role: 'athlete', // default role
-        sport: '',
+        sport: 'Select a Sport',
         district: '',
         age: '',
         team: ''
@@ -32,7 +33,7 @@ const SignupPage = () => {
             password: '',
             confirmPassword: '',
             role: newRole,
-            sport: '',
+            sport: 'Select a Sport',
             district: '',
             age: '',
             team: ''
@@ -60,6 +61,13 @@ const SignupPage = () => {
         // Validate password length
         if (formData.password.length < 6) {
             setError('Password must be at least 6 characters');
+            return;
+        }
+
+        // Validate sport selection for athletes
+        if (formData.role === 'athlete' && (!formData.sport || formData.sport === 'Select a Sport')) {
+            setError('Please select a sport');
+            showToast('Please select a sport', 'error');
             return;
         }
 
@@ -215,16 +223,20 @@ const SignupPage = () => {
                             <>
                                 <div className="mb-4">
                                     <label htmlFor="sport" className="sr-only">Sport</label>
-                                    <input
+                                    <select
                                         id="sport"
                                         name="sport"
-                                        type="text"
                                         required={role === 'athlete'}
-                                        className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                                        placeholder="Sport (e.g., Athletics, Swimming)"
+                                        className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-gray-700 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                                         value={formData.sport}
                                         onChange={handleChange}
-                                    />
+                                    >
+                                        {SPORTS_LIST.map((sport) => (
+                                            <option key={sport} value={sport} disabled={sport === "Select a Sport"}>
+                                                {sport}
+                                            </option>
+                                        ))}
+                                    </select>
                                 </div>
                                 <div className="mb-4">
                                     <label htmlFor="age" className="sr-only">Age</label>

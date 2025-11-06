@@ -13,6 +13,15 @@ const logPerformance = async (req, res) => {
             return res.status(400).json({ message: 'Please provide all required performance fields' });
         }
 
+        // Validate metric selection
+        if (metricName === 'Select a Metric') {
+            return res.status(400).json({ message: 'Please select a valid metric' });
+        }
+
+        if (metricUnit === 'Select Unit') {
+            return res.status(400).json({ message: 'Please select a valid unit' });
+        }
+
         // Check if the user exists and is an athlete
         const athlete = await User.findById(athleteId);
         if (!athlete) {
